@@ -2,7 +2,7 @@
 node_modules/
 
 # Ignore .env files
-.env
+.env*
 
 # Ignore .vscode folder if present
 # A .vscode is usually created when you change vscode settings only for a certain workspace (project)

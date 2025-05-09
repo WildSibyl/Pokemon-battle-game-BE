@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Counter from "./models/Counter.js";
+import Counter from "./Counter.js";
 
 const leaderboardSchema = new mongoose.Schema({
   id: { type: Number, unique: true },
@@ -21,4 +21,5 @@ leaderboardSchema.pre("save", async function (next) {
   next();
 });
 
-module.exports = mongoose.model("Leaderboard", leaderboardSchema);
+const Leaderboard = mongoose.model("Leaderboard", leaderboardSchema);
+export default Leaderboard;

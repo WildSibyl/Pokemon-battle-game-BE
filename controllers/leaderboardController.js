@@ -5,12 +5,9 @@ import Leaderboard from "../models/Leaderboard.js";
 export const getAllEntries = async (req, res) => {
   try {
     const entries = await Leaderboard.find();
-    res.json(entries);
+    res.status(200).json(entries);
   } catch (err) {
-    const error = new ErrorResponse(
-      "Failed to fetch all leaderboard entries.",
-      500
-    );
+    const error = new ErrorResponse("Failed to fetch all entries.", 500);
     res.status(error.statusCode).json({ error: error.message });
   }
 };
@@ -23,7 +20,7 @@ export const getEntryById = async (req, res) => {
       const error = new ErrorResponse("Entry not found.", 404);
       return res.status(error.statusCode).json({ error: error.message });
     }
-    res.json(entry);
+    res.status(200).json(entry);
   } catch (err) {
     const error = new ErrorResponse("Failed to fetch entry.", 500);
     res.status(error.statusCode).json({ error: error.message });
@@ -44,7 +41,7 @@ export const createEntry = async (req, res) => {
     await entry.save();
     res.status(201).json(entry);
   } catch (err) {
-    const error = new ErrorResponse("Failed to create leaderboard entry.", 500);
+    const error = new ErrorResponse("Failed to create entry.", 500);
     res.status(error.statusCode).json({ error: error.message });
   }
 };
@@ -78,7 +75,7 @@ export const updateEntryById = async (req, res) => {
       return res.status(error.statusCode).json({ error: error.message });
     }
 
-    res.json(updated);
+    res.status(200).json(updated);
   } catch (err) {
     const error = new ErrorResponse("Failed to update entry.", 500);
     res.status(error.statusCode).json({ error: error.message });
@@ -93,7 +90,7 @@ export const deleteEntryById = async (req, res) => {
       const error = new ErrorResponse("Entry not found.", 404);
       return res.status(error.statusCode).json({ error: error.message });
     }
-    res.json({ message: "Entry deleted successfully." });
+    res.status(200).json({ message: "Entry deleted successfully." });
   } catch (err) {
     const error = new ErrorResponse("Failed to delete entry.", 500);
     res.status(error.statusCode).json({ error: error.message });

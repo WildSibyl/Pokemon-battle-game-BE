@@ -1,35 +1,42 @@
 import ErrorResponse from "../utils/ErrorResponse.js";
 import Leaderboard from "../models/Leaderboard.js";
 
-// GET
-export const getAllEntries = async (req, res, next) => {
+// GET all entries
+export const getAllEntries = async (req, res) => {
   try {
     const entries = await Leaderboard.find();
     res.json(entries);
   } catch (err) {
-    next(new ErrorResponse("Failed to fetch all leaderboard entries.", 500));
+    const error = new ErrorResponse(
+      "Failed to fetch all leaderboard entries.",
+      500
+    );
+    res.status(error.statusCode).json({ error: error.message });
   }
 };
 
-// GET
-export const getEntryById = async (req, res, next) => {
+// GET entry by ID
+export const getEntryById = async (req, res) => {
   try {
-    const entry = await Leaderboard.findOne({ id: parseInt(req.params.id) });
+    const entry = await Leaderboard.findById(req.params.id);
     if (!entry) {
-      return next(new ErrorResponse("Entry not found.", 404));
+      const error = new ErrorResponse("Entry not found.", 404);
+      return res.status(error.statusCode).json({ error: error.message });
     }
     res.json(entry);
   } catch (err) {
-    next(new ErrorResponse("Failed to fetch entry.", 500));
+    const error = new ErrorResponse("Failed to fetch entry.", 500);
+    res.status(error.statusCode).json({ error: error.message });
   }
 };
 
-// POST
-export const createEntry = async (req, res, next) => {
+// POST new entry
+export const createEntry = async (req, res) => {
   const { username, score } = req.body;
 
   if (!username || score == null) {
-    return next(new ErrorResponse("Username and score are required.", 400));
+    const error = new ErrorResponse("Username and score are required.", 400);
+    return res.status(error.statusCode).json({ error: error.message });
   }
 
   try {
@@ -37,56 +44,58 @@ export const createEntry = async (req, res, next) => {
     await entry.save();
     res.status(201).json(entry);
   } catch (err) {
-    next(new ErrorResponse("Failed to create leaderboard entry.", 500));
+    const error = new ErrorResponse("Failed to create leaderboard entry.", 500);
+    res.status(error.statusCode).json({ error: error.message });
   }
 };
 
-// PUT
-export const updateEntryById = async (req, res, next) => {
+// PUT update entry
+export const updateEntryById = async (req, res) => {
   const { username, score } = req.body;
 
   if (username == null && score == null) {
-    return next(
-      new ErrorResponse(
-        "At least one of username or score must be provided.",
-        400
-      )
+    const error = new ErrorResponse(
+      "At least one of username or score must be provided.",
+      400
     );
+    return res.status(error.statusCode).json({ error: error.message });
   }
 
   try {
-    const updated = await Leaderboard.findOneAndUpdate(
-      { id: parseInt(req.params.id) },
-      {
-        $set: {
-          ...(username && { username }),
-          ...(score != null && { score }),
-        },
-      },
+    const updates = {
+      ...(username && { username }),
+      ...(score != null && { score }),
+    };
+
+    const updated = await Leaderboard.findByIdAndUpdate(
+      req.params.id,
+      { $set: updates },
       { new: true }
     );
 
     if (!updated) {
-      return next(new ErrorResponse("Entry not found.", 404));
+      const error = new ErrorResponse("Entry not found.", 404);
+      return res.status(error.statusCode).json({ error: error.message });
     }
 
     res.json(updated);
   } catch (err) {
-    next(new ErrorResponse("Failed to update entry.", 500));
+    const error = new ErrorResponse("Failed to update entry.", 500);
+    res.status(error.statusCode).json({ error: error.message });
   }
 };
 
-// DELETE
-export const deleteEntryById = async (req, res, next) => {
+// DELETE entry
+export const deleteEntryById = async (req, res) => {
   try {
-    const result = await Leaderboard.findOneAndDelete({
-      id: parseInt(req.params.id),
-    });
+    const result = await Leaderboard.findByIdAndDelete(req.params.id);
     if (!result) {
-      return next(new ErrorResponse("Entry not found.", 404));
+      const error = new ErrorResponse("Entry not found.", 404);
+      return res.status(error.statusCode).json({ error: error.message });
     }
     res.json({ message: "Entry deleted successfully." });
   } catch (err) {
-    next(new ErrorResponse("Failed to delete entry.", 500));
+    const error = new ErrorResponse("Failed to delete entry.", 500);
+    res.status(error.statusCode).json({ error: error.message });
   }
 };

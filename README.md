@@ -29,8 +29,8 @@ https://pokemon-battle-game-zbom.onrender.com/
 
 1. Clone the repository
 
-git clone <repo-url>
-cd <repo-folder>
+git clone <this-repo-url>
+cd <the-downloaded-repo-folder>
 
 2. Install dependencies
 
